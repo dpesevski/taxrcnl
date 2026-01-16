@@ -1,0 +1,59 @@
+TxnCodeRaw,NormalizedTxnType,CashRule,UnitsRule,CostRule,TransferType,Notes
+BUY|,BUY,,,,,Auto-listed from sample files (BUY / ). Review + finalize.
+BUY|YLD: 2.64%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 2.64%). Review + finalize.
+BUY|YLD: 2.68%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 2.68%). Review + finalize.
+BUY|YLD: 2.86%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 2.86%). Review + finalize.
+BUY|YLD: 2.94%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 2.94%). Review + finalize.
+BUY|YLD: 3.03%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 3.03%). Review + finalize.
+BUY|YLD: 3.29%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 3.29%). Review + finalize.
+BUY|YLD: 3.83%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 3.83%). Review + finalize.
+BUY|YLD: 3.84%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 3.84%). Review + finalize.
+BUY|YLD: 3.87%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 3.87%). Review + finalize.
+BUY|YLD: 3.99%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 3.99%). Review + finalize.
+BUY|YLD: 4.02%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 4.02%). Review + finalize.
+BUY|YLD: 4.18%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 4.18%). Review + finalize.
+BUY|YLD: 4.24%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 4.24%). Review + finalize.
+BUY|YLD: 4.61%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 4.61%). Review + finalize.
+BUY|YLD: 4.78%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 4.78%). Review + finalize.
+BUY|YLD: 4.81%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 4.81%). Review + finalize.
+BUY|YLD: 5.00%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 5.00%). Review + finalize.
+BUY|YLD: 5.05%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 5.05%). Review + finalize.
+BUY|YLD: 5.16%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 5.16%). Review + finalize.
+BUY|YLD: 5.19%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 5.19%). Review + finalize.
+BUY|YLD: 5.39%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 5.39%). Review + finalize.
+BUY|YLD: 5.58%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 5.58%). Review + finalize.
+BUY|YLD: 5.60%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 5.60%). Review + finalize.
+BUY|YLD: 5.82%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 5.82%). Review + finalize.
+BUY|YLD: 6.22%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 6.22%). Review + finalize.
+BUY|YLD: 6.45%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 6.45%). Review + finalize.
+BUY|YLD: 6.47%,BUY,,,,,Auto-listed from sample files (BUY / YLD: 6.47%). Review + finalize.
+CANCEL BUY|,,,,,,Auto-listed from sample files (CANCEL BUY / ). Review + finalize.
+CANCEL BUY|YLD: 3.83%,,,,,,Auto-listed from sample files (CANCEL BUY / YLD: 3.83%). Review + finalize.
+CANCEL BUY|YLD: 5.00%,,,,,,Auto-listed from sample files (CANCEL BUY / YLD: 5.00%). Review + finalize.
+CANCEL SELL|,,,,,,Auto-listed from sample files (CANCEL SELL / ). Review + finalize.
+DEPOSIT|DEP C6,DEPOSIT,,,,,Auto-listed from sample files (DEPOSIT / DEP C6). Review + finalize.
+DEPOSIT|DEP H3,DEPOSIT,,,,,Auto-listed from sample files (DEPOSIT / DEP H3). Review + finalize.
+DIVIDEND|DIV,DIV_CASH,,,,,Auto-listed from sample files (DIVIDEND / DIV). Review + finalize.
+EXCHANGE|NAC RG,,,,,,Auto-listed from sample files (EXCHANGE / NAC RG). Review + finalize.
+EXCHANGE|XCH RG,,,,,,Auto-listed from sample files (EXCHANGE / XCH RG). Review + finalize.
+EXPIRED|RED RG,,,,,,Auto-listed from sample files (EXPIRED / RED RG). Review + finalize.
+INTEREST|INT,INTEREST_REINV,,,,,Auto-listed from sample files (INTEREST / INT). Review + finalize.
+INTEREST|INT C5,INTEREST_REINV,,,,,Auto-listed from sample files (INTEREST / INT C5). Review + finalize.
+JOURNAL SALE|SEL KP,,,,,,Auto-listed from sample files (JOURNAL SALE / SEL KP). Review + finalize.
+MISC CASH|FTT TT,,,,,,Auto-listed from sample files (MISC CASH / FTT TT). Review + finalize.
+MISC CASH|FXC F7,,,,,,Auto-listed from sample files (MISC CASH / FXC F7). Review + finalize.
+MISC CASH|FXC H4,,,,,,Auto-listed from sample files (MISC CASH / FXC H4). Review + finalize.
+MISC CASH|NRT,,,,,,Auto-listed from sample files (MISC CASH / NRT). Review + finalize.
+MISC CASH|RTC Z$,,,,,,Auto-listed from sample files (MISC CASH / RTC Z$). Review + finalize.
+PURCHASE|PUR KP,,,,,,Auto-listed from sample files (PURCHASE / PUR KP). Review + finalize.
+REINVESTED|EXH AB,,,,,,Auto-listed from sample files (REINVESTED / EXH AB). Review + finalize.
+REINVESTED|XCH F1,,,,,,Auto-listed from sample files (REINVESTED / XCH F1). Review + finalize.
+RRSP TRANS|TF6 Y4,,,,,,Auto-listed from sample files (RRSP TRANS / TF6 Y4). Review + finalize.
+SELL|,SELL,,,,,Auto-listed from sample files (SELL / ). Review + finalize.
+SPLIT|DIS Z$,,,,,,Auto-listed from sample files (SPLIT / DIS Z$). Review + finalize.
+STOCK DIV|DIS Z$,DIV_REINV,,,,,Auto-listed from sample files (STOCK DIV / DIS Z$). Review + finalize.
+STOCK DIV|DIV C5,DIV_REINV,,,,,Auto-listed from sample files (STOCK DIV / DIV C5). Review + finalize.
+TRANSFER|CON C2,TRANSFER,,,,,Auto-listed from sample files (TRANSFER / CON C2). Review + finalize.
+WITHDRAWAL|AFT T9,WITHDRAWAL,,,,,Auto-listed from sample files (WITHDRAWAL / AFT T9). Review + finalize.
+WITHDRAWAL|EFT T9,WITHDRAWAL,,,,,Auto-listed from sample files (WITHDRAWAL / EFT T9). Review + finalize.
+|FEB.22 COST,,,,,,Auto-listed from sample files ( / FEB.22 COST). Review + finalize.

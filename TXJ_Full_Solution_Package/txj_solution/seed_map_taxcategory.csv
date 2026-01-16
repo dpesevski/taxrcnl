@@ -1,0 +1,9 @@
+NormalizedTxnType,TaxCategory
+BUY,Non-Income
+DEPOSIT,Non-Income
+DIV_CASH,Canadian Dividend
+DIV_REINV,Canadian Dividend
+INTEREST_REINV,Interest
+SELL,Non-Income
+TRANSFER,Non-Income
+WITHDRAWAL,Non-Income
