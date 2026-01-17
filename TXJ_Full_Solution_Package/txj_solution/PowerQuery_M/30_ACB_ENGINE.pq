@@ -1,66 +1,120 @@
 let
-    L = LEDGER,
-    Seed = Excel.CurrentWorkbook(){[Name="tbl_Opening_Seed"]}[Content],
-    SeedKeyed = Table.TransformColumns(Seed, {{"AccountID", each Text.Upper(Text.Trim(Text.From(_))), type text}, {"SecurityID", each Text.Upper(Text.Trim(Text.From(_))), type text}, {"Currency", each Text.Upper(Text.Trim(Text.From(_))), type text}}),
+    TRNTYPE_MAP_DATA =
+        Table.NestedJoin(
+            CLEANED_DATA,
+            {"TransTypeStd"},
+            TRNTYPE_MAP,
+            {"RawTransType"},
+            "Map",
+            JoinKind.LeftOuter
+        ),
 
-    # Helper function: ACB roll-forward on a sorted table
-    fnACB = (t as table, openingUnits as number, openingACB as number) as table =>
-        let
-            Recs = Table.ToRecords(t),
-            Out = List.Accumulate(Recs, {}, (state, cur) =>
-                let
-                    prevUnits = if List.Count(state)=0 then openingUnits else state{List.Count(state)-1}[RunningUnits],
-                    prevACB = if List.Count(state)=0 then openingACB else state{List.Count(state)-1}[RunningACB],
+    Expanded =
+        Table.ExpandTableColumn(
+            TRNTYPE_MAP_DATA,
+            "Map",
+            {"TxnClass","CashRule","UnitsRule","CostRule","IncomeType","ReturnType","RequiresSecurityKey","Notes"},
+            {"TxnClass","CashRule","UnitsRule","CostRule","IncomeType","ReturnType","RequiresSecurityKey","TxnNotes"}
+        ),
 
-                    unitsDelta = try Number.From(cur[UnitsDelta]) otherwise 0,
-                    cashDelta = try Number.From(cur[CashDelta]) otherwise 0,
-                    costDeltaPre = try Number.From(cur[CostDeltaPre]) otherwise 0,
-                    comm = try Number.From(cur[Commission]) otherwise 0,
-                    ntype = if Record.HasFields(cur, "NormalizedTxnType") then Text.Upper(Text.From(cur[NormalizedTxnType])) else "",
+    // Explicit unmapped flag (exception will be built downstream)
+    AddUnmapped =
+        Table.AddColumn(
+            Expanded,
+            "IsUnmapped",
+            each [TxnClass] = null,
+            type logical,
 
-                    isSell = (ntype = "SELL"),
-                    sellUnits = if isSell then Number.Abs(unitsDelta) else 0,
-                    avgCost = if prevUnits = 0 then null else prevACB / prevUnits,
-                    costRemoved = if isSell and avgCost <> null then sellUnits * avgCost else 0,
+    AddPeriodMonth = Table.AddColumn(AddUnmapped, "PeriodMonth", each Date.StartOfMonth([ValueDate]), type date),
+    AddPeriodQuarter =
+        Table.AddColumn(
+            AddPeriodMonth,
+            "PeriodQuarter",
+            each #date(Date.Year([ValueDate]), Number.RoundUp(Date.Month([ValueDate]) / 3) * 3 - 2, 1),
+            type date
+        ),
+    AddPeriodYear = Table.AddColumn(AddPeriodQuarter, "PeriodYear", each Date.Year([ValueDate]), Int64.Type),
 
-                    costAdd = if isSell then 0 else costDeltaPre,
-
-                    runningACB = prevACB + costAdd - costRemoved,
-                    runningUnits = prevUnits + unitsDelta,
-
-                    realizedGain = if isSell and avgCost <> null then cashDelta - costRemoved - comm else null,
-
-                    rec1 = Record.AddField(cur, "AvgCostPerUnit", avgCost),
-                    rec2 = Record.AddField(rec1, "CostRemoved", costRemoved),
-                    rec3 = Record.AddField(rec2, "RunningUnits", runningUnits),
-                    rec4 = Record.AddField(rec3, "RunningACB", runningACB),
-                    rec5 = Record.AddField(rec4, "RealizedGain", realizedGain)
+    AddCashDelta =
+        Table.AddColumn(
+            AddPeriodYear,
+            "CashDelta",
+            each
+                let ta = [TotalAmount],
+                    cm = if [Commission] = null then 0 else [Commission]
                 in
-                    state & {rec5}
-            ),
-            Tbl = Table.FromRecords(Out)
-        in
-            Tbl,
+                    if [CashRule] = "TOTAL_PLUS_COMM" then (if ta = null then null else ta + cm)
+                    else if [CashRule] = "TOTAL" then ta
+                    else if [CashRule] = "NONE" then 0
+                    else null,
+            type number
+        ),
 
-    # Group by Account+Security+Currency and apply ACB
-    AddKeys = Table.AddColumn(L, "_Key", each [AccountID] & "|" & [SecurityID] & "|" & [Currency], type text),
+    AddUnitsDelta =
+        Table.AddColumn(
+            AddCashDelta,
+            "UnitsDelta",
+            each if [UnitsRule] = "UNITS" then [Units] else null,
+            type number
+        ),
 
-    Grouped = Table.Group(AddKeys, {"AccountID","SecurityID","Currency"}, {
-        {"Data", (t) =>
-            let
-                sorted = Table.Sort(t, {{"SettleDate", Order.Ascending}, {"RawRowID", Order.Ascending}}),
-                acc = t{0}[AccountID],
-                sec = t{0}[SecurityID],
-                cur = t{0}[Currency],
-                seedRows = Table.SelectRows(SeedKeyed, each [AccountID]=acc and [SecurityID]=sec and [Currency]=cur),
-                ou = if Table.RowCount(seedRows)=0 then 0 else try Number.From(seedRows{0}[OpeningUnits]) otherwise 0,
-                oa = if Table.RowCount(seedRows)=0 then 0 else try Number.From(seedRows{0}[OpeningACB]) otherwise 0
-            in
-                fnACB(sorted, ou, oa)
-        }
-    }),
+    AddCostDeltaPre =
+        Table.AddColumn(
+            AddUnitsDelta,
+            "CostDelta_Pre",
+            each
+                if [CostRule] = "BUY_COST" then
+                    // prefer cash-derived cost when cash exists; else fall back to UnitPrice if available
+                    if [CashDelta] <> null and [CashDelta] <> 0 then -[CashDelta]
+                    else if [UnitsDelta] <> null and [UnitPrice] <> null then [UnitsDelta] * [UnitPrice]
+                    else null
+                else if [CostRule] = "REINVEST_COST" then
+                    if [UnitsDelta] <> null and [ReinvestPrice] <> null then [UnitsDelta] * [ReinvestPrice] else null
+                else if [CostRule] = "ZERO" then 0
+                else null,
+            type number
+        ),
 
-    Expanded = Table.ExpandTableColumn(Grouped, "Data", Table.ColumnNames(Grouped[Data]{0}), Table.ColumnNames(Grouped[Data]{0}))
+    // --- period open/close markers at ACCOUNT x MONTH level ---
+    GroupMinMax =
+        Table.Group(
+            AddCostDeltaPre,
+            {"Account","PeriodMonth"},
+            {
+                {"MinSort", each List.Min([LedgerRowID]), Int64.Type},
+                {"MaxSort", each List.Max([LedgerRowID]), Int64.Type}
+            }
+        ),
 
+    MergeMinMax =
+        Table.NestedJoin(
+            AddCostDeltaPre,
+            {"Account","PeriodMonth"},
+            GroupMinMax,
+            {"Account","PeriodMonth"},
+            "MM",
+            JoinKind.LeftOuter
+        ),
+
+    ExpandMinMax =
+        Table.ExpandTableColumn(MergeMinMax, "MM", {"MinSort","MaxSort"}, {"MinSort","MaxSort"}),
+
+    AddIsOpen =
+        Table.AddColumn(
+            ExpandMinMax,
+            "IsPeriodOpenRow",
+            each [LedgerRowID] = [MinSort],
+            type logical
+        ),
+
+    AddIsClose =
+        Table.AddColumn(
+            AddIsOpen,
+            "IsPeriodCloseRow",
+            each [LedgerRowID] = [MaxSort],
+            type logical
+        ),
+
+    DropMM = Table.RemoveColumns(AddIsClose, {"MinSort","MaxSort"})
 in
-    Expanded
+    DropMM
